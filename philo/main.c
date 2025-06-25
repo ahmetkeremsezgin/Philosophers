@@ -1,94 +1,68 @@
-#include <stdio.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: 42 <42@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/01 00:00:00 by 42                #+#    #+#             */
+/*   Updated: 2024/01/01 00:00:00 by 42               ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "phlio.h"
-#include <sys/time.h>
-#include <stddef.h>
-#include "stdlib.h"
 
-
-int init_fork (t_simulation *sim)
+static int	validate_args(int argc, char **argv)
 {
-    int index;
+	int	i;
+	int	j;
 
-    index = 0;
-    sim->forks = malloc(sim->number_of_philosopher * sizeof(pthread_mutex_t));
-    if (!sim->forks)
-        return (1);
-    while (sim->number_of_philosopher > index)
-    {
-        if (pthread_mutex_init(&sim->forks[index], NULL))
-        {
-            free(sim->forks);
-            return(1);
-        }
-        index++;
-    }
-    return (0);
+	if (argc < 5 || argc > 6)
+		return (0);
+	i = 1;
+	while (i < argc)
+	{
+		j = 0;
+		while (argv[i][j])
+		{
+			if (argv[i][j] < '0' || argv[i][j] > '9')
+				return (0);
+			j++;
+		}
+		if (ft_atoi(argv[i]) <= 0)
+			return (0);
+		i++;
+	}
+	return (1);
 }
 
-int init_philos(t_simulation *sim)
+static void	print_usage(void)
 {
-    int index;
-
-    index = 0;
-    sim->philos = malloc(sim->number_of_philosopher * sizeof(t_philo));
-    while (sim->number_of_philosopher > index)
-    {
-        sim->philos[index] = (t_philo) {
-            .id = index + 1,
-            .last_meal_time = get_current_time(),
-            .sim = sim,
-            .left_fork = sim->forks[index],
-            .right_fork = sim->forks[index + 1], //TODO değişecek
-        };
-        if (pthread_mutex_init(&sim->philos[index].meal_lock, NULL))
-        {
-            free(sim->philos);
-            return (1);
-        }
-        if (pthread_mutex_init(&sim->philos[index].eat_lock, NULL))
-        {
-            free(sim->philos);
-            return (1);
-        }
-        index++;
-    }
+	printf("Usage: ./philo number_of_philosophers time_to_die ");
+	printf("time_to_eat time_to_sleep ");
+	printf("[number_of_times_each_philosopher_must_eat]\n");
 }
 
-int init_simulation(t_simulation *sim, int argc, char **argv)
+int	main(int argc, char **argv)
 {
-    int err;
+	t_data	data;
 
-    err = 0;
-    *sim = (t_simulation) {
-        .number_of_philosopher = safe_atoi(argv[1], &err),
-        .time_to_die = safe_atoi(argv[2], &err),
-        .time_to_eat = safe_atoi(argv[3], &err),
-        .time_to_sleep = safe_atoi(argv[4], &err),
-        .start_time = get_current_time()
-    };
-    if (argc == 6)
-        sim->eat_count = safe_atoi(argv[5], &err);
-    if (err)
-        return (err);
-    if (pthread_mutex_init(&sim->finish_mutex, NULL))
-        return (err);
-    if(init_fork(sim))
-        return (1);
-    if(init_philos(sim))
-        return (1);
-}
-
-int start_philos(t_simulation *sim);
-
-void start_simulation(t_simulation *sim);
-
-int main(int argc, char *argv[])
-{
-    t_simulation    sim;
-
-    if (!(argc == 5 || argc == 6))
-        return (1);
-    if (!init_simulation(&sim, argc, argv))
-        /*XXX ensure that print err and exit*/
-    start_simulation(&sim);
+	if (!validate_args(argc, argv))
+	{
+		print_usage();
+		return (1);
+	}
+	if (init_data(&data, argc, argv))
+	{
+		printf("Error: Failed to initialize data\n");
+		return (1);
+	}
+	if (create_threads(&data))
+	{
+		printf("Error: Failed to create threads\n");
+		cleanup(&data);
+		return (1);
+	}
+	cleanup(&data);
+	return (0);
 }

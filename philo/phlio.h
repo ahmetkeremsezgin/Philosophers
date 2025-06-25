@@ -1,38 +1,63 @@
-#ifndef PHILO_H
-#define PHILO_H
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   phlio.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: 42 <42@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/01 00:00:00 by 42                #+#    #+#             */
+/*   Updated: 2024/01/01 00:00:00 by 42               ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include <pthread.h>
+#ifndef PHLIO_H
+# define PHLIO_H
 
-typedef struct  s_simulation t_simulation;
+# include <pthread.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+# include <sys/time.h>
+# include <unistd.h>
 
-typedef struct  s_philo
+typedef struct s_philo
 {
 	int				id;
-	long			last_meal_time;
 	int				eat_count;
-	pthread_mutex_t *left_fork;
-	pthread_mutex_t *right_fork;
-	pthread_mutex_t	meal_lock;
-	pthread_mutex_t eat_lock;
-	t_simulation	*sim;
-} t_philo;
+	long long		last_eat;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*right_fork;
+	pthread_mutex_t	eat_mutex;
+	struct s_data	*data;
+}					t_philo;
 
-typedef struct  s_simulation
+typedef struct s_data
 {
-	int				number_of_philosopher;
+	int				num_philos;
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				eat_count;
-	long			start_time;
-	int				is_over;
-	pthread_mutex_t finish_mutex;
-	t_philo 		*philos;
-	pthread_mutex_t *forks;
-} t_simulation;
+	long long		start_time;
+	int				dead;
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	print_mutex;
+	pthread_mutex_t	dead_mutex;
+	pthread_mutex_t	eat_count_mutex;
+	t_philo			*philos;
+	pthread_t		*threads;
+	pthread_t		monitor_thread;
+}					t_data;
 
-
-int safe_atoi(char *input, int *err);
-unsigned long get_current_time();
-
+int					ft_atoi(const char *str);
+long long			get_time(void);
+void				ft_usleep(long long time);
+void				print_status(t_philo *philo, char *status);
+int					init_data(t_data *data, int argc, char **argv);
+int					create_threads(t_data *data);
+void				*philosopher_routine(void *arg);
+void				*monitor_routine(void *arg);
+void				cleanup(t_data *data);
+void				join_threads(t_data *data);
+int					create_philosopher_threads(t_data *data);
 #endif

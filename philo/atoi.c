@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   time_utils.c                                       :+:      :+:    :+:   */
+/*   atoi.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: 42 <42@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,19 +12,41 @@
 
 #include "phlio.h"
 
-long long	get_time(void)
+static int	handle_sign(const char **str)
 {
-	struct timeval	tv;
+	int	sign;
 
-	gettimeofday(&tv, NULL);
-	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+	sign = 1;
+	if (**str == '-' || **str == '+')
+	{
+		if (**str == '-')
+			sign = -1;
+		(*str)++;
+	}
+	return (sign);
 }
 
-void	ft_usleep(long long time)
+static int	convert_digits(const char *str)
 {
-	long long	start;
+	int	result;
 
-	start = get_time();
-	while (get_time() - start < time)
-		usleep(100);
+	result = 0;
+	while (*str >= '0' && *str <= '9')
+	{
+		result = result * 10 + (*str - '0');
+		str++;
+	}
+	return (result);
+}
+
+int	ft_atoi(const char *str)
+{
+	int	result;
+	int	sign;
+
+	while (*str == ' ' || (*str >= 9 && *str <= 13))
+		str++;
+	sign = handle_sign(&str);
+	result = convert_digits(str);
+	return (result * sign);
 }
