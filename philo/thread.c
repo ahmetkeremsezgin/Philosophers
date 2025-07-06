@@ -12,20 +12,18 @@
 
 #include "phlio.h"
 
-static int	check_philo_death(t_philo *philo)
+static int check_philo_death(t_philo *philo)
 {
-	long long	current_time;
+	long long current_time;
 
 	pthread_mutex_lock(&philo->eat_mutex);
 	current_time = get_time();
-	if (current_time - philo->last_eat > philo->data->time_to_die)
-	{
-		pthread_mutex_unlock(&philo->eat_mutex);
-		return (1);
-	}
+	int died = (current_time - philo->last_eat > philo->data->time_to_die);
 	pthread_mutex_unlock(&philo->eat_mutex);
-	return (0);
+
+	return died;
 }
+
 
 static int	check_all_philos_eaten(t_data *data)
 {
@@ -33,20 +31,22 @@ static int	check_all_philos_eaten(t_data *data)
 
 	if (data->eat_count == -1)
 		return (0);
-	pthread_mutex_lock(&data->eat_count_mutex);
+
 	i = 0;
 	while (i < data->num_philos)
 	{
+		pthread_mutex_lock(&data->philos[i].eat_mutex);
 		if (data->philos[i].eat_count < data->eat_count)
 		{
-			pthread_mutex_unlock(&data->eat_count_mutex);
+			pthread_mutex_unlock(&data->philos[i].eat_mutex);
 			return (0);
 		}
+		pthread_mutex_unlock(&data->philos[i].eat_mutex);
 		i++;
 	}
-	pthread_mutex_unlock(&data->eat_count_mutex);
 	return (1);
 }
+
 
 static void	check_deaths(t_data *data)
 {
@@ -75,6 +75,9 @@ void	*monitor_routine(void *arg)
 	t_data	*data;
 
 	data = (t_data *)arg;
+	pthread_mutex_lock(&data->start_mutex);
+	data->start = 1;
+	pthread_mutex_unlock(&data->start_mutex);
 	while (1)
 	{
 		check_deaths(data);
@@ -87,7 +90,6 @@ void	*monitor_routine(void *arg)
 			pthread_mutex_unlock(&data->dead_mutex);
 			return (NULL);
 		}
-		usleep(1000);
 	}
 	return (NULL);
 }

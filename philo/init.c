@@ -87,6 +87,7 @@ int	init_data(t_data *data, int argc, char **argv)
 	data->time_to_eat = ft_atoi(argv[3]);
 	data->time_to_sleep = ft_atoi(argv[4]);
 	data->eat_count = -1;
+	data->start = 0;
 	if (argc == 6)
 		data->eat_count = ft_atoi(argv[5]);
 	data->start_time = get_time();

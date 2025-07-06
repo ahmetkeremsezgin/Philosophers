@@ -40,7 +40,9 @@ typedef struct s_data
 	int				eat_count;
 	long long		start_time;
 	int				dead;
+	int				start;
 	pthread_mutex_t	*forks;
+	pthread_mutex_t	start_mutex;
 	pthread_mutex_t	print_mutex;
 	pthread_mutex_t	dead_mutex;
 	pthread_mutex_t	eat_count_mutex;
