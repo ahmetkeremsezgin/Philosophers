@@ -60,5 +60,4 @@ void	cleanup(t_data *data)
 	cleanup_threads(data);
 	pthread_mutex_destroy(&data->print_mutex);
 	pthread_mutex_destroy(&data->dead_mutex);
-	pthread_mutex_destroy(&data->eat_count_mutex);
 }

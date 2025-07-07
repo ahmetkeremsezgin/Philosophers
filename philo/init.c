@@ -21,12 +21,6 @@ static int	init_mutexes(t_data *data)
 		pthread_mutex_destroy(&data->print_mutex);
 		return (1);
 	}
-	if (pthread_mutex_init(&data->eat_count_mutex, NULL))
-	{
-		pthread_mutex_destroy(&data->print_mutex);
-		pthread_mutex_destroy(&data->dead_mutex);
-		return (1);
-	}
 	return (0);
 }
 
@@ -98,7 +92,6 @@ int	init_data(t_data *data, int argc, char **argv)
 	{
 		pthread_mutex_destroy(&data->print_mutex);
 		pthread_mutex_destroy(&data->dead_mutex);
-		pthread_mutex_destroy(&data->eat_count_mutex);
 		return (1);
 	}
 	if (init_philos(data))

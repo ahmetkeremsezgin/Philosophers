@@ -12,33 +12,6 @@
 
 #include "phlio.h"
 
-static int	handle_sign(const char **str)
-{
-	int	sign;
-
-	sign = 1;
-	if (**str == '-' || **str == '+')
-	{
-		if (**str == '-')
-			sign = -1;
-		(*str)++;
-	}
-	return (sign);
-}
-
-static int	convert_digits(const char *str)
-{
-	int	result;
-
-	result = 0;
-	while (*str >= '0' && *str <= '9')
-	{
-		result = result * 10 + (*str - '0');
-		str++;
-	}
-	return (result);
-}
-
 int	ft_atoi(const char *str)
 {
 	int	result;
@@ -46,7 +19,18 @@ int	ft_atoi(const char *str)
 
 	while (*str == ' ' || (*str >= 9 && *str <= 13))
 		str++;
-	sign = handle_sign(&str);
-	result = convert_digits(str);
+	sign = 1;
+	if (*str == '-' || *str == '+')
+	{
+		if (*str == '-')
+			sign = -1;
+		str++;
+	}
+	result = 0;
+	while (*str >= '0' && *str <= '9')
+	{
+		result = result * 10 + (*str - '0');
+		str++;
+	}
 	return (result * sign);
 }

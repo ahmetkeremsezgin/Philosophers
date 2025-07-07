@@ -12,22 +12,16 @@
 
 #include "phlio.h"
 
-static void	print_message(t_philo *philo, char *status)
-{
-	printf("%lld %d %s\n", get_time() - philo->data->start_time,
-		philo->id, status);
-}
-
 void	print_status(t_philo *philo, char *status)
 {
 	pthread_mutex_lock(&philo->data->print_mutex);
 	pthread_mutex_lock(&philo->data->dead_mutex);
 	if (!philo->data->dead)
-		print_message(philo, status);
+		printf("%lld %d %s\n", get_time() - philo->data->start_time,
+			philo->id, status);
 	pthread_mutex_unlock(&philo->data->dead_mutex);
 	pthread_mutex_unlock(&philo->data->print_mutex);
 }
-
 
 int	create_threads(t_data *data)
 {

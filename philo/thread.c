@@ -12,18 +12,17 @@
 
 #include "phlio.h"
 
-static int check_philo_death(t_philo *philo)
+static int	check_philo_death(t_philo *philo)
 {
-	long long current_time;
+	long long	current_time;
+	int			died;
 
 	pthread_mutex_lock(&philo->eat_mutex);
 	current_time = get_time();
-	int died = (current_time - philo->last_eat > philo->data->time_to_die);
+	died = (current_time - philo->last_eat > philo->data->time_to_die);
 	pthread_mutex_unlock(&philo->eat_mutex);
-
-	return died;
+	return (died);
 }
-
 
 static int	check_all_philos_eaten(t_data *data)
 {
@@ -31,7 +30,6 @@ static int	check_all_philos_eaten(t_data *data)
 
 	if (data->eat_count == -1)
 		return (0);
-
 	i = 0;
 	while (i < data->num_philos)
 	{
@@ -46,7 +44,6 @@ static int	check_all_philos_eaten(t_data *data)
 	}
 	return (1);
 }
-
 
 static void	check_deaths(t_data *data)
 {
@@ -75,9 +72,7 @@ void	*monitor_routine(void *arg)
 	t_data	*data;
 
 	data = (t_data *)arg;
-	pthread_mutex_lock(&data->start_mutex);
 	data->start = 1;
-	pthread_mutex_unlock(&data->start_mutex);
 	while (1)
 	{
 		check_deaths(data);

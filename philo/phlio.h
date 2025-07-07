@@ -42,10 +42,8 @@ typedef struct s_data
 	int				dead;
 	int				start;
 	pthread_mutex_t	*forks;
-	pthread_mutex_t	start_mutex;
 	pthread_mutex_t	print_mutex;
 	pthread_mutex_t	dead_mutex;
-	pthread_mutex_t	eat_count_mutex;
 	t_philo			*philos;
 	pthread_t		*threads;
 	pthread_t		monitor_thread;
