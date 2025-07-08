@@ -10,13 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "phlio.h"
+#include <unistd.h>
 
 static void	handle_forks(t_philo *philo, int take)
 {
 	if (take)
 	{
-		if (philo->id % 2 == 0)
-			usleep(100);
 		if (philo->id % 2 == 0)
 		{
 			pthread_mutex_lock(philo->right_fork);
@@ -78,7 +77,10 @@ void	*philosopher_routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	while (!philo->data->start)
+	while (!philo->data->start) /*XXX DATA RACE ***ALERT*** */
+		;
+	philo->last_eat = get_time();
+	if (philo->id % 2 == 0)
 		usleep(100);
 	while (1)
 	{

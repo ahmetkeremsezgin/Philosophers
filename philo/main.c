@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "phlio.h"
+#include <unistd.h>
 
 static int	validate_args(int argc, char **argv)
 {
@@ -38,9 +39,9 @@ static int	validate_args(int argc, char **argv)
 
 static void	print_usage(void)
 {
-	printf("Usage: ./philo number_of_philosophers time_to_die ");
-	printf("time_to_eat time_to_sleep ");
-	printf("[number_of_times_each_philosopher_must_eat]\n");
+	write(1, "Usage: ./philo number_of_philosophers time_to_die ", 50);
+	write(1, "time_to_eat time_to_sleep ", 26);
+	write(1, "[number_of_times_each_philosopher_must_eat]\n", 45);
 }
 
 int	main(int argc, char **argv)
@@ -54,12 +55,12 @@ int	main(int argc, char **argv)
 	}
 	if (init_data(&data, argc, argv))
 	{
-		printf("Error: Failed to initialize data\n");
+		write(1, "Error: Failed to initialize data\n", 34);
 		return (1);
 	}
 	if (create_threads(&data))
 	{
-		printf("Error: Failed to create threads\n");
+		write(1, "Error: Failed to create threads\n", 33);
 		cleanup(&data);
 		return (1);
 	}

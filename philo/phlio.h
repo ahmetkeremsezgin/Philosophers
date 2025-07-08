@@ -14,11 +14,8 @@
 # define PHLIO_H
 
 # include <pthread.h>
-# include <stdio.h>
 # include <stdlib.h>
-# include <string.h>
 # include <sys/time.h>
-# include <unistd.h>
 
 typedef struct s_philo
 {
@@ -41,6 +38,7 @@ typedef struct s_data
 	long long		start_time;
 	int				dead;
 	int				start;
+	pthread_mutex_t start_mutex;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print_mutex;
 	pthread_mutex_t	dead_mutex;
@@ -52,6 +50,7 @@ typedef struct s_data
 int					ft_atoi(const char *str);
 long long			get_time(void);
 void				ft_usleep(long long time);
+void				write_status(long long timestamp, int id, const char *status);
 void				print_status(t_philo *philo, char *status);
 int					init_data(t_data *data, int argc, char **argv);
 int					create_threads(t_data *data);
@@ -60,4 +59,5 @@ void				*monitor_routine(void *arg);
 void				cleanup(t_data *data);
 void				join_threads(t_data *data);
 int					create_philosopher_threads(t_data *data);
+
 #endif

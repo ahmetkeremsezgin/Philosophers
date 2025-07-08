@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "phlio.h"
+#include <unistd.h>
 
 long long	get_time(void)
 {

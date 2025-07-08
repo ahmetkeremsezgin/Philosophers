@@ -74,6 +74,13 @@ static int	init_philos(t_data *data)
 	return (0);
 }
 
+void start_mutex_handele(t_data *data)
+{
+	pthread_mutex_lock(&data->start_mutex);
+	data->start = 0;	
+	pthread_mutex_unlock(&data->start_mutex);
+}
+
 int	init_data(t_data *data, int argc, char **argv)
 {
 	data->num_philos = ft_atoi(argv[1]);
@@ -81,7 +88,7 @@ int	init_data(t_data *data, int argc, char **argv)
 	data->time_to_eat = ft_atoi(argv[3]);
 	data->time_to_sleep = ft_atoi(argv[4]);
 	data->eat_count = -1;
-	data->start = 0;
+	start_mutex_handele(data);
 	if (argc == 6)
 		data->eat_count = ft_atoi(argv[5]);
 	data->start_time = get_time();
