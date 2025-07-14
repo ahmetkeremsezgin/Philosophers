@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "phlio.h"
+#include <stdlib.h>
 
 static int	check_philo_death(t_philo *philo)
 {
@@ -54,12 +55,15 @@ static void	check_deaths(t_data *data)
 	{
 		if (check_philo_death(&data->philos[i]))
 		{
-			pthread_mutex_lock(&data->print_mutex);
-			write_status(get_time() - data->start_time, data->philos[i].id, "died");
-			pthread_mutex_unlock(&data->print_mutex);
 			pthread_mutex_lock(&data->dead_mutex);
 			data->dead = 1;
 			pthread_mutex_unlock(&data->dead_mutex);
+			pthread_mutex_lock(&data->print_mutex);
+			pthread_mutex_lock(&data->start_mutex);
+			write_status(get_time() - data->start_time,
+				data->philos[i].id, "died");
+			pthread_mutex_unlock(&data->start_mutex);
+			pthread_mutex_unlock(&data->print_mutex);
 			return ;
 		}
 		i++;
@@ -71,9 +75,9 @@ void	*monitor_routine(void *arg)
 	t_data	*data;
 
 	data = (t_data *)arg;
-	data->start_time = get_time();
 	pthread_mutex_lock(&data->start_mutex);
 	data->start = 1;
+	data->start_time = get_time();
 	pthread_mutex_unlock(&data->start_mutex);
 	while (1)
 	{

@@ -77,9 +77,9 @@ void	*philosopher_routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	while (!philo->data->start) /*XXX DATA RACE ***ALERT*** */
-		;
+	pthread_mutex_lock(&philo->eat_mutex);
 	philo->last_eat = get_time();
+	pthread_mutex_unlock(&philo->eat_mutex);
 	if (philo->id % 2 == 0)
 		usleep(100);
 	while (1)
@@ -89,8 +89,13 @@ void	*philosopher_routine(void *arg)
 			handle_single_philosopher(philo);
 			return (NULL);
 		}
+		pthread_mutex_lock(&philo->data->dead_mutex);
 		if (philo->data->dead)
+		{
+			pthread_mutex_unlock(&philo->data->dead_mutex);
 			break ;
+		}
+		pthread_mutex_unlock(&philo->data->dead_mutex);
 		philosopher_cycle(philo);
 	}
 	return (NULL);

@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "phlio.h"
+#include <stdlib.h>
 
 static void	cleanup_philos(t_data *data)
 {

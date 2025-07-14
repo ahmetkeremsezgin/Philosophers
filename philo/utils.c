@@ -11,13 +11,16 @@
 /* ************************************************************************** */
 
 #include "phlio.h"
+#include <stdlib.h>
 
 void	print_status(t_philo *philo, char *status)
 {
 	pthread_mutex_lock(&philo->data->print_mutex);
 	pthread_mutex_lock(&philo->data->dead_mutex);
+	pthread_mutex_lock(&philo->data->start_mutex);
 	if (!philo->data->dead)
 		write_status(get_time() - philo->data->start_time, philo->id, status);
+	pthread_mutex_unlock(&philo->data->start_mutex);
 	pthread_mutex_unlock(&philo->data->dead_mutex);
 	pthread_mutex_unlock(&philo->data->print_mutex);
 }

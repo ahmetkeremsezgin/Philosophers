@@ -1,6 +1,6 @@
 NAME = philo
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror
+CC = cc
+CFLAGS = -Wall -Wextra -Werror 
 SRCS = main.c init.c thread.c cleanup.c utils.c time_utils.c atoi.c philosopher.c print.c
 OBJS = $(SRCS:.c=.o)
 
