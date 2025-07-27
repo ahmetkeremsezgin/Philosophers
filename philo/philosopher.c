@@ -81,14 +81,14 @@ void	*philosopher_routine(void *arg)
 	philo->last_eat = get_time();
 	pthread_mutex_unlock(&philo->eat_mutex);
 	if (philo->id % 2 == 0)
-		usleep(100);
+		ft_usleep(100);
+	if (philo->data->num_philos == 1)
+	{
+		handle_single_philosopher(philo);
+		return (NULL);
+	}	
 	while (1)
 	{
-		if (philo->data->num_philos == 1)
-		{
-			handle_single_philosopher(philo);
-			return (NULL);
-		}
 		pthread_mutex_lock(&philo->data->dead_mutex);
 		if (philo->data->dead)
 		{
